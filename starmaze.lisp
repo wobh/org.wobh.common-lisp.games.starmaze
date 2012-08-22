@@ -82,7 +82,8 @@
   (with-output-to-string (table-str)
     (print-table-row table-str head-frmts col-widths head-data)
     (print-table-div table-str col-widths)
-    (loop for row in body-data
+    (loop
+       for row in body-data
        do (print-table-row table-str body-frmts col-widths row))))
 
 
@@ -302,41 +303,44 @@ conversion.")
 
 ;;; Starmaze output functions
 
-(defun make-maze-figures (number &optional figures)
+(defun make-maze-figures (locus &optional figures)
   "Create a list of figures for representing a maze locus.
 
 Returns a list of binary digits in big-endian order. If figures are given, maps the digits to the figures."
-  (etypecase number
-    ((integer 0 #o777)
-     (let ((nlist (loop
-		     for power from 8 downto 0 
-		     collect 
-		       (multiple-value-bind (quotient remainder)
-			   (floor number (expt 2 power))
-			 (setf number remainder)
-			 quotient))))
-       (if figures
-	   (map 'list
-		(lambda (n)
-		  (elt (etypecase figures
-			 (symbol (get-figures figures))
-			 (list figures)) n))
-		nlist)
-	   nlist)))))
+  (assert (typep locus '(integer 0 #o777)))
+  (let ((nlist (loop
+		  for power from 8 downto 0 
+		  collect 
+		    (multiple-value-bind (quotient remainder)
+			(floor locus (expt 2 power))
+		      (setf locus remainder)
+		      quotient))))
+    (if figures
+	(map 'list
+	     (lambda (n)
+	       (elt (etypecase figures
+		      (symbol (get-figures figures))
+		      (list figures)) n))
+	     nlist)
+	nlist)))
 
-(defun make-cartan-maze-figures (number)
+
+
+(defun make-cartan-maze-figures (locus)
   "Create list of cartan figures."
+  (assert (typep locus '(integer 0 #o777)))
   (loop
-       for astr in (make-maze-figures number (get-figures 'star))
+       for astr in (make-maze-figures locus (get-figures 'star))
        for cart in (make-maze-figures
-		    (change-maze number 'hypercube)
+		    (change-maze locus 'hypercube)
 		    (get-figures 'yinyang))
        collect (format nil cart astr)))
 
-(defun make-key-figures (number keys)
+(defun make-key-figures (locus keys)
   "Create a list of available keys at maze locus."
+  (assert (typep locus '(integer 0 #o777)))
   (loop
-     for d in (make-maze-figures number)
+     for d in (make-maze-figures locus)
      ;; for d across (format Nil "~9,'0B" n)
      for k in keys
      collect (if (zerop d) ;; (zerop (char-digit-p d))
@@ -347,13 +351,13 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
   "Print a 3x3 grid of figures."
   (format stream "~2&~{~:}" "~&~3@{ ~A~}~%" figures))
 
-(defun print-star-grid (stream number &optional (figures (get-figures 'star)))
+(defun print-star-grid (stream locus &optional (figures (get-figures 'star)))
   "Print constellation to stream from sector-scan."
-  (print-grid stream (make-maze-figures number figures)))
+  (print-grid stream (make-maze-figures locus figures)))
 
-(defun print-key-grid (stream number keys)
+(defun print-key-grid (stream locus keys)
   "Print keys to stream from sector-scan."
-  (print-grid stream (make-key-figures number keys)))
+  (print-grid stream (make-key-figures locus keys)))
 
 
 ;;; Starmaze fundamentals
@@ -517,9 +521,9 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
   (with-output-to-string (chart)
     (format chart "~2&|-------+-------+-------|")
     (loop
-	 for i from 0 to 6 by 3
-	 for j from 3 to 9 by 3
-	 do
+       for i from 0 to 6 by 3
+       for j from 3 to 9 by 3
+       do
 	 (loop
 	    for k from 0 to 6 by 3
 	    for l from 3 to 9 by 3
@@ -605,14 +609,14 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
     (let ((asterism (get-asterism here 'symbol)))
       (cond ((eq asterism 'shangrila)
 	     (sm-print "We have found Shangri-La!")
-	     (funcall #'end-game env 'shangri-la))
+	     (end-game env 'shangri-la))
 	    ((eq asterism 'blackhole)
 	     (sm-print "We have fallen into a black hole!")
-	     (funcall #'end-game env 'black-hole))
+	     (end-game env 'black-hole))
 	    ((eq asterism 'leavemaze)
 	     (unless (sm-explore env)
 	       (sm-print "We have found our home base!")
-	       (funcall #'end-game env 'leave-maze)))
+	       (end-game env 'leave-maze)))
 	    ((eq asterism 'mazestart)
 	     (when (= (length path) 1)
 	       (sm-print "We have entered the star maze!")))
