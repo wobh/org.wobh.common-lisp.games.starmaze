@@ -136,17 +136,16 @@ represents each printed row top-to-bottom).")
 
 (defun change-maze (locus maze-ref)
   "Convert location from old-maze to new-maze."
-  (etypecase locus
-    ((integer 0 #o777)
-     (let ((new-maze
-	    (etypecase maze-ref
-	      (symbol (get-maze maze-ref))
-	      (list maze-ref))))
-       (reduce #'logxor
-	       (remove-if (complement
-			   (lambda (i)
-			     (logbitp (- 8 (position i new-maze)) locus)))
-			  new-maze))))))
+  (assert locus '(integer 0 #o777))
+  (let ((new-maze
+	 (etypecase maze-ref
+	   (symbol (get-maze maze-ref))
+	   (list maze-ref))))
+    (reduce #'logxor
+	    (remove-if (complement
+			(lambda (i)
+			  (logbitp (- 8 (position i new-maze)) locus)))
+		       new-maze))))
 
 
 (defparameter *axes-db*
