@@ -136,7 +136,7 @@ represents each printed row top-to-bottom).")
 
 (defun change-maze (locus maze-ref)
   "Convert location from old-maze to new-maze."
-  (assert locus '(integer 0 #o777))
+  (assert (typep locus '(integer 0 #o777)))
   (let ((new-maze
 	 (etypecase maze-ref
 	   (symbol (get-maze maze-ref))
