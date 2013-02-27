@@ -1,3 +1,4 @@
+;;;; -*- Mode:lisp;coding:utf-8 -*-
 ;;;; FILE: starmaze.lisp
 
 ;;;; DESCRIPTION
@@ -274,8 +275,9 @@ conversion.")
     (star . #\*) ; next
     (from . #\+)
     (near . #\o)
-    (yin  "(~A)")
-    (yang "[~A]"))
+    ;;(yin  "(~A)")
+    ;;(yang "[~A]")
+    )
   "List of symbols for maps, charts and legends.")
 
 (defun get-legend-sign (legend-ref &optional legend-type)
