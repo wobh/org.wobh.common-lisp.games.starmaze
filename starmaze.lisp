@@ -28,15 +28,15 @@
 
 ;;;; By default shangri-la #o777 lies out-of-reach.
 
-(defpackage "ORG.WOBH.STARMAZE"
-  (:nicknames "STARMAZE" "SM")
-  (:use "COMMON-LISP")
-  (:export "MAIN" "MAKE-STARMAZE" "*GAMES*"
-	   "*MAZES-DB*" "*AXES-DB*" "*KEYS-DB*"
-	   "GET-MAZE" "GET-AXES" "GET-KEYS")
+(defpackage #:org.wobh.starmaze
+  (:nicknames #:starmaze #:sm)
+  (:use #:common-lisp)
+  (:export #:main #:make-starmaze #:*games*
+	   #:*mazes-db* #:*axes-db* #:*keys-db*
+	   #:get-maze #:get-axes #:get-keys)
   (:documentation "Type 'help' for help."))
 
-(in-package "ORG.WOBH.STARMAZE")
+(in-package #:org.wobh.starmaze)
 
 
 ;;; Starmaze report functions (many based loosely on Emacs Org-mode format)
