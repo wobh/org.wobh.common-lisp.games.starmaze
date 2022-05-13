@@ -1,0 +1,50 @@
+#+title: Starmaze README
+#+date: <2022-05-12 Thu>
+#+author: William Clifford
+#+email: will@wobh.org
+#+language: en
+#+select_tags: export
+#+exclude_tags: noexport
+
+* Introduction
+
+Based on the game described by John Cartan at:
+http://www.cartania.com/starmaze/intro.html
+
+* Purpose
+
+This is here shared with the idea that some might find it useful for
+personal experiments and toys--that's all I'm using it for. It might
+also be cautionarily if not pedagogically useful. All that said, it
+should not be expected to have any desireable characteristics or be
+useful in any way.
+
+Non-personal use (for example, commercial) is forbidden.
+
+Non-casual personal use is strongly discouraged.
+
+* Instructions
+
+To use:
+
+1. Clone repository
+2. Run ~make install~ this will install it into
+   ~${XDG_DATA_HOME}/common-lisp/source/org.wobh.common-lisp.games.starmaze~
+3. in REPL ~(require :asdf)~ (as needed)
+4. ~(require :org.wobh.common-lisp.games.starmaze)~
+
+The test package is simply Lisp assertions and loads with the rest of
+the system. If the system loads without errors all the tests passed.
+
+The package defines a nickname of ~starmaze~ for convenience.
+
+Once required, you can play starmaze in the REPL with
+~(starmaze:play)~ or enter the playtest environment with ~(in-package
+#:starmaze-user)~.
+
+* COMMENT org settings
+#+options: ':nil *:t -:t ::t <:t H:6 \n:nil ^:t arch:headline
+#+options: author:t broken-links:nil c:nil creator:nil
+#+options: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:nil
+#+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
+#+options: timestamp:t title:t toc:nil todo:t |:t

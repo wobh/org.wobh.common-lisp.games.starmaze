@@ -1,43 +1,42 @@
-;;;; -*- Mode:lisp;coding:utf-8 -*-
-;;;; FILE: starmaze.lisp
+;; -*- mode: lisp -*-
 
-;;;; DESCRIPTION
-
-;;;; Based on the game described by John Cartan at:
-;;;; http://www.cartania.com/starmaze/intro.html
-
-;;;; AUTHORS
-
-;;;; William H. Clifford <wobh@wobh.org>
-
-;;;; NOTES
-
-;;;; In this one I try to write a normal common-lisp package and
-;;;; generally make this code look superficially like something
-;;;; written by someone who knows what they're doing.
-
-;;;; Locations in the starmaze are treated as numbers and this code
-;;;; uses octal numbers to represent them because they easier to
-;;;; visualize the constellation expected.
-
-;;;; (print-star-grid t #o421 'star)
-
-;;;;  *    
-;;;;    *  
-;;;;      *
-
-;;;; By default shangri-la #o777 lies out-of-reach.
-
-(defpackage #:org.wobh.starmaze
-  (:nicknames #:starmaze #:sm)
+(defpackage #:org.wobh.common-lisp.games.starmaze
   (:use #:common-lisp)
-  (:export #:main #:make-starmaze #:*games*
-	   #:*mazes-db* #:*axes-db* #:*keys-db*
-	   #:get-maze #:get-axes #:get-keys)
-  (:documentation "Type 'help' for help."))
+  (:nicknames #:starmaze)
+  (:export #:play #:make-starmaze
+	   #:list-games #:clear-games
+	   #:list-mazes #:get-maze
+	   #:list-axes #:get-axes
+	   #:list-keys #:get-keys)
+  (:documentation "ORG.WOBH.COMMON-LISP.GAMES.STARMAZE
 
-(in-package #:org.wobh.starmaze)
+DESCRIPTION
 
+Based on the game described by John Cartan at:
+http://www.cartania.com/starmaze/intro.html
+
+AUTHORS
+
+William H. Clifford <wobh@wobh.org>
+
+NOTES
+
+Locations in the starmaze are treated as numbers and this code
+uses octal numbers to represent them because they easier to
+visualize the constellation expected.
+
+(print-star-grid t #o421 'star)
+
+ *    
+   *  
+     *
+
+By default shangri-la #o777 lies out-of-reach.
+
+Type 'help' for help.
+"))
+
+(in-package #:org.wobh.common-lisp.games.starmaze)
 
 ;;; Starmaze report functions (many based loosely on Emacs Org-mode format)
 
@@ -94,6 +93,12 @@
 (defparameter *games* '()
   "List of games played.")
 
+(defun list-games ()
+  *games*)
+
+(defun clear-games ()
+  (setf *games* '()))
+
 (defparameter *mazes-db*
   (list
    :classical
@@ -113,6 +118,7 @@
 	 #o262 #o525 #o232
 	 #o405 #o072 #o105)
    :supernova
+
    (list #o432 #o205 #o162
 	 #o141 #o272 #o414
 	 #o234 #o502 #o261)
@@ -128,6 +134,9 @@
    )
   "List of mazes (assumes major axes for which each octal digit
 represents each printed row top-to-bottom).")
+
+(defun list-mazes ()
+  *mazes-db*)
 
 (defun get-maze (maze-name)
   "Get a maze from the list of mazes."
@@ -171,6 +180,9 @@ represents each printed row top-to-bottom).")
   "List of axes. System uses major internally. Use the others for
 conversion.")
 
+(defun list-axes ()
+  *axes-db*)
+
 (defun get-axes (axes-name)
   "Get axes from the list of axes."
   (getf *axes-db* (intern (symbol-name axes-name) 'keyword)))
@@ -209,6 +221,9 @@ conversion.")
    :qwerty-left (list "q" "w" "e" "a" "s" "d" "z" "x" "c")
   )
   "List of keys.")
+
+(defun list-keys ()
+  *keys-db*)
 
 (defun get-keys (keys-name)
   "Get keys from the list of keys."
@@ -630,13 +645,13 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
 	 (eval-here env))
 	(T (sm-print "No star that way."))))
 
-(defun main-read (&key (stream *query-io*))
+(defun play-read (&key (stream *query-io*))
   "Read input from player."
   (force-output stream)
   (clear-input stream)
   (read-line stream))
 
-(defun main-apply (env order &rest args)
+(defun play-apply (env order &rest args)
   "Carry out orders, update order history."
   (cond ((eq order 'bad-input)
 	 (let ((mesg (format Nil "Bad input, '~A'. Type 'help' for help."
@@ -646,7 +661,7 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
 	     (etypecase bad-max
 	       ((integer 1)
 		(cond ((< bad-max bad-num)
-		       (main-apply env 'end-game
+		       (play-apply env 'end-game
 				   'too-many-bad-inputs))
 		      (T  (incf bad-num) mesg)))
 	       (null mesg)))))
@@ -666,21 +681,21 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
 	       (T
 		(apply (symbol-function order) env args))))))
 
-(defun main-eval (env kbd)
+(defun play-eval (env kbd)
   "Evaluate player input."
   (cond
     ((member kbd (sm-keys env)
-	     :test 'equal)    (main-apply env 'eval-keys kbd))
-    ((equal  kbd "help")      (main-apply env 'show-help))
-    ((equal  kbd "maps")      (main-apply env 'show-maps))
-    ((equal  kbd "info")      (main-apply env 'show-info))
-    ((equal  kbd "keys")      (main-apply env 'show-keys))
-    ((equal  kbd "here")      (main-apply env 'show-here))
-    ((equal  kbd "near")      (main-apply env 'show-near))
-    ((equal  kbd "quit")      (main-apply env 'end-game 'quit-game))
-    (T                        (main-apply env 'bad-input kbd))))
+	     :test 'equal)    (play-apply env 'eval-keys kbd))
+    ((equal  kbd "help")      (play-apply env 'show-help))
+    ((equal  kbd "maps")      (play-apply env 'show-maps))
+    ((equal  kbd "info")      (play-apply env 'show-info))
+    ((equal  kbd "keys")      (play-apply env 'show-keys))
+    ((equal  kbd "here")      (play-apply env 'show-here))
+    ((equal  kbd "near")      (play-apply env 'show-near))
+    ((equal  kbd "quit")      (play-apply env 'end-game 'quit-game))
+    (T                        (play-apply env 'bad-input kbd))))
 
-(defun main-print (message &key (stream *standard-output*))
+(defun play-print (message &key (stream *standard-output*))
   "Print message to player."
   (when (stringp message)
     (sm-print message :stream stream)))
@@ -706,15 +721,15 @@ Type 'help' for help.
   "Has an end-game order been given?"
   (eq (sm-prev-order env) 'end-game))
 
-(defun main (&optional starmaze)
+(defun play (&optional starmaze)
   "Play a game of Starmaze."
   (sm-print *launch-message*)
   (loop
      with env = (or starmaze (make-starmaze))
      initially (eval-here env)
      do
-       (main-print (show-turn env))
-       (main-print (main-eval env (main-read)))
+       (play-print (show-turn env))
+       (play-print (play-eval env (play-read)))
      until (end-game-p env)
      finally (push env *games*)))
 
