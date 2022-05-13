@@ -86,8 +86,7 @@ Type 'help' for help.
        for row in body-data
        do (print-table-row table-str body-frmts col-widths row))))
 
-
-
+
 ;;; Starmaze data
 
 (defparameter *games* '()
@@ -120,7 +119,6 @@ Type 'help' for help.
 	 #o262 #o525 #o232
 	 #o405 #o072 #o105)
    :supernova
-
    (list #o432 #o205 #o162
 	 #o141 #o272 #o414
 	 #o234 #o502 #o261)
@@ -256,7 +254,6 @@ conversion."
     (shangrila #o777 "Shangri-La"))
   "List of constellations.")
 
-
 (defun get-asterism (star-ref &optional aster-type)
   "Get asterism from reference."
   (let ((aster
@@ -290,8 +287,6 @@ conversion."
   "Get axes from the list of axes."
   (getf *figures* (intern (symbol-name figure-ref) 'keyword)))
 
-
-
 (defparameter *legend*
   '((void . #\space)
     (star . #\*) ; next
@@ -323,7 +318,7 @@ conversion."
 ;; redundant, but I used to do fancy things with them that *figures*
 ;; and get-figures do more simply.
 
-
+
 ;;; Starmaze output functions
 
 (defun make-maze-figures (locus &optional figures)
@@ -346,8 +341,6 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
 		      (list figures)) n))
 	     nlist)
 	nlist)))
-
-
 
 (defun make-cartan-maze-figures (locus)
   "Create list of cartan figures."
@@ -382,7 +375,7 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
   "Print keys to stream from sector-scan."
   (print-grid stream (make-key-figures locus keys)))
 
-
+
 ;;; Starmaze fundamentals
 
 (defun looker (here axis)
@@ -393,7 +386,7 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
   "Starmaze step function"
   (logxor here path))
 
-
+
 ;;; Starmaze environment
 
 (defstruct (starmaze (:conc-name sm-))
@@ -471,7 +464,7 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
   (format stream "~V&~A" headspace message)
   (force-output stream))
 
-
+
 ;;; Starmaze game functions
 
 (defun show-here (env &key (level 1))
@@ -592,7 +585,7 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
 	 (print-section report (1+ level) (third aster) :headspace 2)
 	 (print-star-grid report (second aster)))))
 
-
+
 ;;; Game elements
 
 (defun end-game (env end)
