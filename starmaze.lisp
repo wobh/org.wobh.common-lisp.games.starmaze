@@ -94,9 +94,11 @@ Type 'help' for help.
   "List of games played.")
 
 (defun list-games ()
+  "List of games played."
   *games*)
 
 (defun clear-games ()
+  "Clear list of games played."
   (setf *games* '()))
 
 (defparameter *mazes-db*
@@ -136,6 +138,8 @@ Type 'help' for help.
 represents each printed row top-to-bottom).")
 
 (defun list-mazes ()
+  "List of mazes (assumes major axes for which each octal digit
+represents each printed row top-to-bottom)."
   *mazes-db*)
 
 (defun get-maze (maze-name)
@@ -181,6 +185,8 @@ represents each printed row top-to-bottom).")
 conversion.")
 
 (defun list-axes ()
+  "List of axes. System uses major internally. Use the others for
+conversion."
   *axes-db*)
 
 (defun get-axes (axes-name)
@@ -223,6 +229,7 @@ conversion.")
   "List of keys.")
 
 (defun list-keys ()
+  "List of keys."
   *keys-db*)
 
 (defun get-keys (keys-name)
