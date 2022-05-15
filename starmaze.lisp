@@ -7,7 +7,8 @@
 	   #:list-games #:clear-games
 	   #:list-mazes #:get-maze
 	   #:list-axes #:get-axes
-	   #:list-keys #:get-keys)
+	   #:list-keys #:get-keys
+	   #:print-star-grid #:print-star-chart)
   (:documentation "ORG.WOBH.COMMON-LISP.GAMES.STARMAZE
 
 DESCRIPTION
@@ -365,6 +366,7 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
 
 (defun print-grid (stream figures)
   "Print a 3x3 grid of figures."
+  (assert (= 9 (list-length figures)))
   (format stream "~2&~{~:}" "~&~3@{ ~A~}~%" figures))
 
 (defun print-star-grid (stream locus &optional (figures (get-figures 'star)))
@@ -374,6 +376,33 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
 (defun print-key-grid (stream locus keys)
   "Print keys to stream from sector-scan."
   (print-grid stream (make-key-figures locus keys)))
+
+(defun print-chart (stream figure-lists)
+  "Print 3x(3x3) chart of figure grids."
+  (assert (= 9 (list-length figure-lists)))
+  (format stream
+	  (with-output-to-string (chart)
+	    (loop
+	      initially
+		 (format chart "~2&|-------+-------+-------|")
+	      for i from 0 to 6 by 3
+	      for j from 3 to 9 by 3
+	      do
+		 (loop
+		   for k from 0 to 6 by 3
+		   for l from 3 to 9 by 3
+		   do
+		      (format chart "~&|")
+		      (loop
+			for figures in (subseq figure-lists i j)
+			do
+			   (format chart "~{ ~A~} |" (subseq figures k l))))
+		 (format chart "~&|-------+-------+-------|")))))
+
+(defun print-star-chart (stream loci &optional (figures (get-figures 'star)))
+  (flet ((make-maze-figures (locus)
+	   (make-maze-figures locus figures)))
+    (print-chart stream (mapcar #'make-maze-figures loci))))
 
 
 ;;; Starmaze fundamentals
@@ -556,7 +585,7 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
        ;; (print-table-div chart (list 5 5 5))
 	 (format chart "~&|-------+-------+-------|"))))
 
-;; FIXME: Generalize this. Give i, j, k, l more sensible names.
+;; FIXME: Generalize this. Give i, j, k, l more sensible names. Use print-chart.
 
 (defun show-near (env &key (level 1))
   "Report chart of nearby systems."

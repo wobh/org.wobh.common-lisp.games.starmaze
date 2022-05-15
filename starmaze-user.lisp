@@ -9,7 +9,8 @@
 		#:list-games #:clear-games
 		#:list-mazes #:get-maze
 		#:list-axes #:get-axes
-		#:list-keys #:get-keys)
+		#:list-keys #:get-keys
+		#:print-star-grid #:print-star-chart)
   (:documentation "ORG.WOBH.COMMON-LISP.GAMES.STARMAZE-USER
 
 For playtesting starmaze."))
