@@ -397,7 +397,13 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
 			for figures in (subseq figure-lists i j)
 			do
 			   (format chart "~{ ~A~} |" (subseq figures k l))))
-		 (format chart "~&|-------+-------+-------|")))))
+		 (format chart "~&|-------+-------+-------|"))))
+  ;; FIXME: Give i, j, k, l more sensible names.
+  ;; FIXME: Generalize? Use table making functions?
+  ;;   (let ((div (print-table-div nil (list 5 5 5))))
+  ;;     do (print-table-row chart ...)
+  ;;     (print-table-div chart (list 5 5 5))
+  )
 
 (defun print-star-chart (stream loci &optional (figures (get-figures 'star)))
   (flet ((make-maze-figures (locus)
@@ -560,36 +566,9 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
 			      ((funcall look (first path) axis) 'star)
 			      (T 'near))))))
 
-(defun make-near-chart (near-scan)
-  "Make chart of nearby constellations."
-  ;; (let ((div (print-table-div Nil (list 5 5 5))))
-  (with-output-to-string (chart)
-    (format chart "~2&|-------+-------+-------|")
-    (loop
-       for i from 0 to 6 by 3
-       for j from 3 to 9 by 3
-       do
-	 (loop
-	    for k from 0 to 6 by 3
-	    for l from 3 to 9 by 3
-	    do
-	      (format chart "~&|")
-	      (loop
-		 for scan in (subseq near-scan i j)
-		 ;; do (print-table-row chart )
-		 do
-		   (format chart "~{ ~A~} |"
-			   (mapcar (lambda (s)
-				     (get-legend-sign s 'character))
-				   (subseq scan k l)))))
-       ;; (print-table-div chart (list 5 5 5))
-	 (format chart "~&|-------+-------+-------|"))))
-
-;; FIXME: Generalize this. Give i, j, k, l more sensible names. Use print-chart.
-
 (defun show-near (env &key (level 1))
   "Report chart of nearby systems."
-  (let ((chart (make-near-chart (scan-near env))))
+  (let ((chart (print-chart nil (scan-near env))))
     (with-output-to-string (report)
       (print-section report level "Chart of nearby systems")
       (format report chart)
