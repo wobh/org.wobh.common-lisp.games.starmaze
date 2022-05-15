@@ -358,7 +358,7 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
   (assert (typep locus '(integer 0 #o777)))
   (loop
      for d in (make-maze-figures locus)
-     ;; for d across (format Nil "~9,'0B" n)
+     ;; for d across (format nil "~9,'0B" n)
      for k in keys
      collect (if (zerop d) ;; (zerop (char-digit-p d))
 		 (get-legend-sign 'void 'string)
@@ -432,7 +432,7 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
   (look              #'looker) ; #'logtest
   (walk              #'walker) ; #'logxor
   (path              (list (get-asterism 'mazestart 'number)))
-  (path-max          Nil) ; when (eq max nil) record without limit
+  (path-max          nil) ; when (eq max nil) record without limit
   (orders            '())
   (orders-max        64)  ; when (eq max nil) record without limit
   (bad-input-count   0)
@@ -440,9 +440,9 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
   ;;(book *asterices*)
   ;;(signs *legend*)
   (info              '(loshu ulam octal #|cartn gray8|#))
-  (turn-info         Nil)
-  (turn-keys         Nil)
-  (explore           Nil))
+  (turn-info         nil)
+  (turn-keys         nil)
+  (explore           nil))
 
 (defun sm-here (env)
   "Where are we in the starmaze?"
@@ -463,7 +463,7 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
 	(etypecase path-max
 	  ((integer 1)
 	   (when (< path-max (length path))
-	     ;; (delete (first (last path)) path :from-end T :count 1)
+	     ;; (delete (first (last path)) path :from-end t :count 1)
 	     (setf path
 		   (butlast path
 			    (- (length path) path-max)))))
@@ -487,9 +487,9 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
 		(sys-fmt (third  sys-lst)))
 	   (setf sys-info
 		 (acons sys-txt
-			(format Nil sys-fmt
+			(format nil sys-fmt
 				(cond ((eq sys 'octal) here)
-				      (T (change-axes here 'major sys))))
+				      (t (change-axes here 'major sys))))
 			sys-info))))
     sys-info))
 
@@ -564,7 +564,7 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
 				      (funcall walk (first path) turn))
 			       'from)
 			      ((funcall look (first path) axis) 'star)
-			      (T 'near))))))
+			      (t 'near))))))
 
 (defun show-near (env &key (level 1))
   "Report chart of nearby systems."
@@ -608,11 +608,11 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
 	   (cond ((y-or-n-p
 		   "~2&We may leave or continue to explore the maze.~
                     ~2&Shall we keep exploring?")
-		  (setf (sm-explore env) T))
-		 (T (push '(end-game leave-maze) orders) T)))
-	  ((equal end 'shangri-la) Nil) ;; not implemented
-	  ((equal end 'black-hole) Nil) ;; not implemented
-	  (T (error "End-game ~A not recognized." end)))))
+		  (setf (sm-explore env) t))
+		 (t (push '(end-game leave-maze) orders) t)))
+	  ((equal end 'shangri-la) nil) ;; not implemented
+	  ((equal end 'black-hole) nil) ;; not implemented
+	  (t (error "End-game ~A not recognized." end)))))
 
 
 ;; Game outcomes
@@ -644,14 +644,14 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
 	    ((eq asterism 'mazestart)
 	     (when (= (length path) 1)
 	       (sm-print "We have entered the star maze!")))
-	    (T Nil)))))
+	    (t nil)))))
 
 (defun eval-keys (env kbd)
   "Evaluate key input."
   (cond ((sm-walker env kbd)
 	 (sm-print (show-here env :level 1))
 	 (eval-here env))
-	(T (sm-print "No star that way."))))
+	(t (sm-print "No star that way."))))
 
 (defun play-read (&key (stream *query-io*))
   "Read input from player."
@@ -662,7 +662,7 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
 (defun play-apply (env order &rest args)
   "Carry out orders, update order history."
   (cond ((eq order 'bad-input)
-	 (let ((mesg (format Nil "Bad input, '~A'. Type 'help' for help."
+	 (let ((mesg (format nil "Bad input, '~A'. Type 'help' for help."
 			     (first args))))
 	   (with-accessors ((bad-max sm-bad-input-max)
 			    (bad-num sm-bad-input-count)) env
@@ -671,22 +671,22 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
 		(cond ((< bad-max bad-num)
 		       (play-apply env 'end-game
 				   'too-many-bad-inputs))
-		      (T  (incf bad-num) mesg)))
+		      (t  (incf bad-num) mesg)))
 	       (null mesg)))))
-	(T
+	(t
 	 (with-accessors ((orders  sm-orders)
 			  (ord-max sm-orders-max)) env
 	   (push (list* order args) orders)
 	   (etypecase ord-max
 	     ((integer 0) (when (< ord-max (length orders))
-			    ;; (delete (first (last orders)) orders :from-end T :count 1)))
+			    ;; (delete (first (last orders)) orders :from-end t :count 1)))
 			    (setf orders
 			    	  (butlast orders
 			    		   (- (length orders) ord-max)))))
-	     (null Nil)))
+	     (null nil)))
 	 (cond ((eq order 'show-maps)
 		(apply (symbol-function order) args))
-	       (T
+	       (t
 		(apply (symbol-function order) env args))))))
 
 (defun play-eval (env kbd)
@@ -701,7 +701,7 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
     ((equal  kbd "here")      (play-apply env 'show-here))
     ((equal  kbd "near")      (play-apply env 'show-near))
     ((equal  kbd "quit")      (play-apply env 'end-game 'quit-game))
-    (T                        (play-apply env 'bad-input kbd))))
+    (t                        (play-apply env 'bad-input kbd))))
 
 (defun play-print (message &key (stream *standard-output*))
   "Print message to player."
