@@ -4,11 +4,11 @@
   (:use #:common-lisp)
   (:nicknames #:starmaze)
   (:export #:play #:make-starmaze
-	   #:list-games #:clear-games
-	   #:list-mazes #:get-maze
-	   #:list-axes #:get-axes
-	   #:list-keys #:get-keys
-	   #:print-star-grid #:print-star-chart)
+           #:list-games #:clear-games
+           #:list-mazes #:get-maze
+           #:list-axes #:get-axes
+           #:list-keys #:get-keys
+           #:print-star-grid #:print-star-chart)
   (:documentation "ORG.WOBH.COMMON-LISP.GAMES.STARMAZE
 
 DESCRIPTION
@@ -44,39 +44,39 @@ Type 'help' for help.
 (defun print-section (stream level sect-head &key (headspace 0))
   "Make a section heading."
   (format stream "~V&~A ~A~%"
-	  headspace
-	  (make-string level :initial-element #\*)
-	  sect-head))
+          headspace
+          (make-string level :initial-element #\*)
+          sect-head))
 
 (defun print-defn-alist (stream defn-alist
-			 &key
-			 (indent 0)
-			 (term-fmt "- ~A ")
-			 (defn-fmt ":: ~A"))
+                         &key
+                         (indent 0)
+                         (term-fmt "- ~A ")
+                         (defn-fmt ":: ~A"))
   "Print an org-mode-like definition list from a lisp association list."
   (format stream
-	  (with-output-to-string (defn-list)
-	    (loop
-	       for (term . defn) in defn-alist
-	       do (format defn-list "~&~V,0T~@?~@?"
-			  indent
-			  term-fmt term
-			  defn-fmt defn)))))
+          (with-output-to-string (defn-list)
+            (loop
+               for (term . defn) in defn-alist
+               do (format defn-list "~&~V,0T~@?~@?"
+                          indent
+                          term-fmt term
+                          defn-fmt defn)))))
 
 (defun print-table-row (stream col-formats col-widths col-data)
   "Print an org-mode-like table row from formatted row data."
   (format stream "~&|~{~:}|" " ~@? ~^|"
-	  (loop
-	     for format in col-formats
-	     for width  in col-widths
-	     for data   in col-data
-	     append (list format width data))))
+          (loop
+             for format in col-formats
+             for width  in col-widths
+             for data   in col-data
+             append (list format width data))))
 
 (defun print-table-div (stream col-widths)
   "Print an org-mode-like divider row for table."
   (format stream "~&|~{~:}|" "-~@A-~^+"
-	  (mapcar (lambda (w) (make-string w :initial-element #\-))
-		  col-widths)))
+          (mapcar (lambda (w) (make-string w :initial-element #\-))
+                  col-widths)))
 
 (defun make-table (head-frmts body-frmts col-widths head-data body-data)
   "Make an org-mode-like table with all trimmings."
@@ -105,33 +105,33 @@ Type 'help' for help.
   (list
    :classical
    (list #o660 #o700 #o330
-	 #o444 #o272 #o111
-	 #o066 #o007 #o033)
+         #o444 #o272 #o111
+         #o066 #o007 #o033)
    :aborigine
    (list #o640 #o720 #o310
-	 #o464 #o525 #o131
-	 #o046 #o027 #o013)
+         #o464 #o525 #o131
+         #o046 #o027 #o013)
    :moonscape
    (list #o524 #o250 #o521
-	 #o242 #o272 #o212
-	 #o425 #o052 #o125)
+         #o242 #o272 #o212
+         #o425 #o052 #o125)
    :pitchfork
    (list #o504 #o270 #o501
-	 #o262 #o525 #o232
-	 #o405 #o072 #o105)
+         #o262 #o525 #o232
+         #o405 #o072 #o105)
    :supernova
    (list #o432 #o205 #o162
-	 #o141 #o272 #o414
-	 #o234 #o502 #o261)
+         #o141 #o272 #o414
+         #o234 #o502 #o261)
    :jellyfish
    (list #o412 #o225 #o142
-	 #o161 #o525 #o434
-	 #o214 #o522 #o241)
+         #o161 #o525 #o434
+         #o214 #o522 #o241)
    ;; Hypercube coordinate mappings
    :hypercube
    (list #o764 #o255 #o731
-	 #o343 #o272 #o616
-	 #o467 #o552 #o137)
+         #o343 #o272 #o616
+         #o467 #o552 #o137)
    )
   "List of mazes (assumes major axes for which each octal digit
 represents each printed row top-to-bottom).")
@@ -151,34 +151,34 @@ represents each printed row top-to-bottom)."
   "Convert location from old-maze to new-maze."
   (assert (typep locus '(integer 0 #o777)))
   (let ((new-maze
-	 (etypecase maze-ref
-	   (symbol (get-maze maze-ref))
-	   (list maze-ref))))
+         (etypecase maze-ref
+           (symbol (get-maze maze-ref))
+           (list maze-ref))))
     (reduce #'logxor
-	    (remove-if (complement
-			(lambda (i)
-			  (logbitp (- 8 (position i new-maze)) locus)))
-		       new-maze))))
+            (remove-if (complement
+                        (lambda (i)
+                          (logbitp (- 8 (position i new-maze)) locus)))
+                       new-maze))))
 
 
 (defparameter *axes-db*
   (list
    :major ; (loop for x from 8 downto 0 collect (expt 2 x))
    (list #o400 #o200 #o100
-	 #o040 #o020 #o010
-	 #o004 #o002 #o001)
+         #o040 #o020 #o010
+         #o004 #o002 #o001)
    :loshu
    (list #o010 #o400 #o002
-	 #o004 #o020 #o100
-	 #o200 #o001 #o040)
+         #o004 #o020 #o100
+         #o200 #o001 #o040)
    :ulam
    (list #o020 #o010 #o004
-	 #o040 #o001 #o002
-	 #o100 #o200 #o400)
+         #o040 #o001 #o002
+         #o100 #o200 #o400)
    :minor ; (loop for x from 0 to 8 collect (expt 2 x))
    (list #o001 #o002 #o004
-	 #o010 #o020 #o040
-	 #o100 #o200 #o400)
+         #o010 #o020 #o040
+         #o100 #o200 #o400)
    )
   "List of axes. System uses major internally. Use the others for
 conversion.")
@@ -195,28 +195,28 @@ conversion."
 (defun get-maze-axis (axis axes-ref maze-ref)
   "Get the maze in mazes corresponding to the axis in axes."  
   (elt (etypecase maze-ref
-	 (symbol (get-maze maze-ref))
-	 (list maze-ref))
+         (symbol (get-maze maze-ref))
+         (list maze-ref))
        (position axis (etypecase axes-ref
-			(symbol (get-axes axes-ref))
-			(list axes-ref)))))
+                        (symbol (get-axes axes-ref))
+                        (list axes-ref)))))
 
 (defun change-axes (number old-order-ref new-order-ref)
   "Convert number from old-order to new-order of powers"
   (let ((old-order (etypecase old-order-ref
-		     (symbol (get-axes old-order-ref))
-		     (list   old-order-ref)))
-	(new-order (etypecase new-order-ref
-		     (symbol (get-axes new-order-ref))
-		     (list   new-order-ref))))
+                     (symbol (get-axes old-order-ref))
+                     (list   old-order-ref)))
+        (new-order (etypecase new-order-ref
+                     (symbol (get-axes new-order-ref))
+                     (list   new-order-ref))))
     (reduce #'+
-	    (mapcar
-	     #'(lambda (power)
-		 (if (logtest number power)
-		     (elt new-order
-			  (position power old-order))
-		     0))
-	     old-order))))
+            (mapcar
+             #'(lambda (power)
+                 (if (logtest number power)
+                     (elt new-order
+                          (position power old-order))
+                     0))
+             old-order))))
 
 
 (defparameter *keys-db*
@@ -238,11 +238,11 @@ conversion."
 (defun get-axis-key (key keys-ref axes-ref)
   "Get the axis in axes corresponding to the key in keys."
   (elt (etypecase axes-ref
-	 (symbol (get-axes axes-ref))
-	 (list axes-ref))
+         (symbol (get-axes axes-ref))
+         (list axes-ref))
        (position key (etypecase keys-ref
-		       (symbol (get-keys keys-ref))
-		       (list keys-ref)) :test 'equal)))
+                       (symbol (get-keys keys-ref))
+                       (list keys-ref)) :test 'equal)))
 
 (defun get-maze-key (key keys-ref axes-ref maze-ref)
   "Get the maze corresponding to the axis corresponding to the key."
@@ -258,18 +258,18 @@ conversion."
 (defun get-asterism (star-ref &optional aster-type)
   "Get asterism from reference."
   (let ((aster
-	 (apply #'find star-ref *asterices*
-		(etypecase star-ref
-		  (symbol (list :key 'first))
-		  (number (list :key 'second))
-		  (string (list :key 'third :test 'equal))))))
+         (apply #'find star-ref *asterices*
+                (etypecase star-ref
+                  (symbol (list :key 'first))
+                  (number (list :key 'second))
+                  (string (list :key 'third :test 'equal))))))
     (if aster-type
-	(ecase aster-type
-	  (list aster)
-	  (symbol (first aster))
-	  (number (second aster))
-	  (string (third aster)))
-	aster)))
+        (ecase aster-type
+          (list aster)
+          (symbol (first aster))
+          (number (second aster))
+          (string (third aster)))
+        aster)))
 
 ;; TODO: It should be possible for a starmaze to have different starts
 ;; and ends, as well as other unreachable places. May need a starmaze
@@ -301,19 +301,19 @@ conversion."
 (defun get-legend-sign (legend-ref &optional legend-type)
   "Get legend-sign from reference."
   (let ((sign
-	 (funcall (etypecase legend-ref
-		    (symbol        #'assoc)
-		    (character     #'rassoc)
-		    ((integer 0 1) #'nth)
-		    ;; (boolean #'(lambda (b) (ecase b (t 1) ((nil) 0))))
-		    ) legend-ref *legend*)))
+         (funcall (etypecase legend-ref
+                    (symbol        #'assoc)
+                    (character     #'rassoc)
+                    ((integer 0 1) #'nth)
+                    ;; (boolean #'(lambda (b) (ecase b (t 1) ((nil) 0))))
+                    ) legend-ref *legend*)))
     (if legend-type
-	(ecase legend-type
-	  (list sign)
-	  (symbol (car sign))
-	  (character (cdr sign))
-	  (string (string (cdr sign))))
-	sign)))
+        (ecase legend-type
+          (list sign)
+          (symbol (car sign))
+          (character (cdr sign))
+          (string (string (cdr sign))))
+        sign)))
 
 ;; FIXME: At this point the *legend* and get-legend-sign seem
 ;; redundant, but I used to do fancy things with them that *figures*
@@ -328,20 +328,20 @@ conversion."
 Returns a list of binary digits in big-endian order. If figures are given, maps the digits to the figures."
   (assert (typep locus '(integer 0 #o777)))
   (let ((nlist (loop
-		  for power from 8 downto 0 
-		  collect 
-		    (multiple-value-bind (quotient remainder)
-			(floor locus (expt 2 power))
-		      (setf locus remainder)
-		      quotient))))
+                  for power from 8 downto 0 
+                  collect 
+                    (multiple-value-bind (quotient remainder)
+                        (floor locus (expt 2 power))
+                      (setf locus remainder)
+                      quotient))))
     (if figures
-	(map 'list
-	     (lambda (n)
-	       (elt (etypecase figures
-		      (symbol (get-figures figures))
-		      (list figures)) n))
-	     nlist)
-	nlist)))
+        (map 'list
+             (lambda (n)
+               (elt (etypecase figures
+                      (symbol (get-figures figures))
+                      (list figures)) n))
+             nlist)
+        nlist)))
 
 (defun make-cartan-maze-figures (locus)
   "Create list of cartan figures."
@@ -349,8 +349,8 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
   (loop
        for astr in (make-maze-figures locus (get-figures 'star))
        for cart in (make-maze-figures
-		    (change-maze locus 'hypercube)
-		    (get-figures 'yinyang))
+                    (change-maze locus 'hypercube)
+                    (get-figures 'yinyang))
        collect (format nil cart astr)))
 
 (defun make-key-figures (locus keys)
@@ -361,8 +361,8 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
      ;; for d across (format nil "~9,'0B" n)
      for k in keys
      collect (if (zerop d) ;; (zerop (char-digit-p d))
-		 (get-legend-sign 'void 'string)
-		 k)))
+                 (get-legend-sign 'void 'string)
+                 k)))
 
 (defun print-grid (stream figures)
   "Print a 3x3 grid of figures."
@@ -381,23 +381,23 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
   "Print 3x(3x3) chart of figure grids."
   (assert (= 9 (list-length figure-lists)))
   (format stream
-	  (with-output-to-string (chart)
-	    (loop
-	      initially
-		 (format chart "~2&|-------+-------+-------|")
-	      for i from 0 to 6 by 3
-	      for j from 3 to 9 by 3
-	      do
-		 (loop
-		   for k from 0 to 6 by 3
-		   for l from 3 to 9 by 3
-		   do
-		      (format chart "~&|")
-		      (loop
-			for figures in (subseq figure-lists i j)
-			do
-			   (format chart "~{ ~A~} |" (subseq figures k l))))
-		 (format chart "~&|-------+-------+-------|"))))
+          (with-output-to-string (chart)
+            (loop
+              initially
+                 (format chart "~2&|-------+-------+-------|")
+              for i from 0 to 6 by 3
+              for j from 3 to 9 by 3
+              do
+                 (loop
+                   for k from 0 to 6 by 3
+                   for l from 3 to 9 by 3
+                   do
+                      (format chart "~&|")
+                      (loop
+                        for figures in (subseq figure-lists i j)
+                        do
+                           (format chart "~{ ~A~} |" (subseq figures k l))))
+                 (format chart "~&|-------+-------+-------|"))))
   ;; FIXME: Give i, j, k, l more sensible names.
   ;; FIXME: Generalize? Use table making functions?
   ;;   (let ((div (print-table-div nil (list 5 5 5))))
@@ -407,7 +407,7 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
 
 (defun print-star-chart (stream loci &optional (figures (get-figures 'star)))
   (flet ((make-maze-figures (locus)
-	   (make-maze-figures locus figures)))
+           (make-maze-figures locus figures)))
     (print-chart stream (mapcar #'make-maze-figures loci))))
 
 
@@ -455,42 +455,42 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
 (defun sm-walker (env key)
   "Walk down a starmaze path."
   (with-accessors ((keys sm-keys) (maze sm-maze) (axes sm-axes)
-		   (look sm-look) (walk sm-walk)
-		   (path sm-path) (path-max sm-path-max)) env
+                   (look sm-look) (walk sm-walk)
+                   (path sm-path) (path-max sm-path-max)) env
     (let ((here (sm-here env)))
       (when (funcall look here (get-axis-key key keys axes))
-	(push (funcall walk here (get-maze-key key keys axes maze)) path)
-	(etypecase path-max
-	  ((integer 1)
-	   (when (< path-max (length path))
-	     ;; (delete (first (last path)) path :from-end t :count 1)
-	     (setf path
-		   (butlast path
-			    (- (length path) path-max)))))
-	  (Null (first path)))))))
+        (push (funcall walk here (get-maze-key key keys axes maze)) path)
+        (etypecase path-max
+          ((integer 1)
+           (when (< path-max (length path))
+             ;; (delete (first (last path)) path :from-end t :count 1)
+             (setf path
+                   (butlast path
+                            (- (length path) path-max)))))
+          (Null (first path)))))))
 
 (defun sm-sys-info (env)
   "Make sys-info alist."
   (let ((here (sm-here env))
-	(systems
-	 '((ulam  "Ulam  " "~6,4,'0R")
-	   (loshu "Lo Shu" " ~3,'0D")
-	   (octal "Octal " " ~3,'0O")
-	   #|(cartn "Cartan" " ~3,'0D")|#
-	   #|(grey8 "Grey  " " ~3,'0D")|#))
-	(sys-info '()))
+        (systems
+         '((ulam  "Ulam  " "~6,4,'0R")
+           (loshu "Lo Shu" " ~3,'0D")
+           (octal "Octal " " ~3,'0O")
+           #|(cartn "Cartan" " ~3,'0D")|#
+           #|(grey8 "Grey  " " ~3,'0D")|#))
+        (sys-info '()))
     (loop
        for sys in (sm-info env)
        do
-	 (let* ((sys-lst (assoc sys systems))
-		(sys-txt (second sys-lst))
-		(sys-fmt (third  sys-lst)))
-	   (setf sys-info
-		 (acons sys-txt
-			(format nil sys-fmt
-				(cond ((eq sys 'octal) here)
-				      (t (change-axes here 'major sys))))
-			sys-info))))
+         (let* ((sys-lst (assoc sys systems))
+                (sys-txt (second sys-lst))
+                (sys-fmt (third  sys-lst)))
+           (setf sys-info
+                 (acons sys-txt
+                        (format nil sys-fmt
+                                (cond ((eq sys 'octal) here)
+                                      (t (change-axes here 'major sys))))
+                        sys-info))))
     sys-info))
 
 (defun sm-print (message &key (stream *standard-output*) (headspace 1))
@@ -536,13 +536,13 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
 (defun show-help (env &key (level 1))
   "Report commands and keys."
   (let ((help-data (list
-		    '(help . "report commands and keys")
-		    '(keys . "report available keys")
-		    '(info . "report system information")
-		    '(here . "report where we are")
-		    '(near . "report nearby systems")
-		    '(maps . "report named systems")
-		    '(quit . "quit game"))))
+                    '(help . "report commands and keys")
+                    '(keys . "report available keys")
+                    '(info . "report system information")
+                    '(here . "report where we are")
+                    '(near . "report nearby systems")
+                    '(maps . "report named systems")
+                    '(quit . "quit game"))))
     (with-output-to-string (report)
       (print-section report level "Commands")
       (print-defn-alist report help-data :indent 2)
@@ -553,18 +553,18 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
 (defun scan-near (env)
   "Scan all paths and make a list of all nearby systems."
   (with-accessors ((axes sm-axes) (maze sm-maze) (path sm-path)
-		   (walk sm-walk) (look sm-look)) env
+                   (walk sm-walk) (look sm-look)) env
     (loop
        for axis in axes
        for turn in maze
        collect
-	 (make-maze-figures (funcall walk (first path) turn)
-			    (cond
-			      ((equal (second path)
-				      (funcall walk (first path) turn))
-			       'from)
-			      ((funcall look (first path) axis) 'star)
-			      (t 'near))))))
+         (make-maze-figures (funcall walk (first path) turn)
+                            (cond
+                              ((equal (second path)
+                                      (funcall walk (first path) turn))
+                               'from)
+                              ((funcall look (first path) axis) 'star)
+                              (t 'near))))))
 
 (defun show-near (env &key (level 1))
   "Report chart of nearby systems."
@@ -575,8 +575,8 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
       ;; (format report "~%")
       (print-section report (1+ level) "Legend" :headspace 2)
       (print-defn-alist report *legend*
-			:indent (+ 2 level)
-			:term-fmt "- ~(~A~) " :defn-fmt ":: [~A]")
+                        :indent (+ 2 level)
+                        :term-fmt "- ~(~A~) " :defn-fmt ":: [~A]")
       (format report "~%"))));FIXME
 
 (defun show-maps (&key (level 1))
@@ -585,13 +585,13 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
     (print-section report level "Named Systems")
     (print-section report (1+ level) "Legend" :headspace 2)
     (print-defn-alist report (subseq *legend* 0 2)
-		      :indent (+ 2 level)
-		      :term-fmt "- ~(~A~) " :defn-fmt ":: [~A]")
+                      :indent (+ 2 level)
+                      :term-fmt "- ~(~A~) " :defn-fmt ":: [~A]")
     (format report "~%")
     (loop for aster in *asterices*
        do
-	 (print-section report (1+ level) (third aster) :headspace 2)
-	 (print-star-grid report (second aster)))))
+         (print-section report (1+ level) (third aster) :headspace 2)
+         (print-star-grid report (second aster)))))
 
 
 ;;; Game elements
@@ -600,19 +600,19 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
   "Decided end game message, conditions."
   (with-accessors ((orders sm-orders)) env
     (cond ((member end '(quit-game too-many-bad-inputs))
-	   (when (y-or-n-p "~&Do you wish to keep playing?")
-	     (when (eq end 'too-many-bad-inputs)
-	       (setf (sm-bad-input-count env) 0))
-	     (pop orders)))
-	  ((equal end 'leave-maze)
-	   (cond ((y-or-n-p
-		   "~2&We may leave or continue to explore the maze.~
+           (when (y-or-n-p "~&Do you wish to keep playing?")
+             (when (eq end 'too-many-bad-inputs)
+               (setf (sm-bad-input-count env) 0))
+             (pop orders)))
+          ((equal end 'leave-maze)
+           (cond ((y-or-n-p
+                   "~2&We may leave or continue to explore the maze.~
                     ~2&Shall we keep exploring?")
-		  (setf (sm-explore env) t))
-		 (t (push '(end-game leave-maze) orders) t)))
-	  ((equal end 'shangri-la) nil) ;; not implemented
-	  ((equal end 'black-hole) nil) ;; not implemented
-	  (t (error "End-game ~A not recognized." end)))))
+                  (setf (sm-explore env) t))
+                 (t (push '(end-game leave-maze) orders) t)))
+          ((equal end 'shangri-la) nil) ;; not implemented
+          ((equal end 'black-hole) nil) ;; not implemented
+          (t (error "End-game ~A not recognized." end)))))
 
 
 ;; Game outcomes
@@ -629,29 +629,29 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
 (defun eval-here (env)
   "Evaluate location."
   (with-accessors ((here sm-here)
-		   (path sm-path)) env
+                   (path sm-path)) env
     (let ((asterism (get-asterism here 'symbol)))
       (cond ((eq asterism 'shangrila)
-	     (sm-print "We have found Shangri-La!")
-	     (end-game env 'shangri-la))
-	    ((eq asterism 'blackhole)
-	     (sm-print "We have fallen into a black hole!")
-	     (end-game env 'black-hole))
-	    ((eq asterism 'leavemaze)
-	     (unless (sm-explore env)
-	       (sm-print "We have found our home base!")
-	       (end-game env 'leave-maze)))
-	    ((eq asterism 'mazestart)
-	     (when (= (length path) 1)
-	       (sm-print "We have entered the star maze!")))
-	    (t nil)))))
+             (sm-print "We have found Shangri-La!")
+             (end-game env 'shangri-la))
+            ((eq asterism 'blackhole)
+             (sm-print "We have fallen into a black hole!")
+             (end-game env 'black-hole))
+            ((eq asterism 'leavemaze)
+             (unless (sm-explore env)
+               (sm-print "We have found our home base!")
+               (end-game env 'leave-maze)))
+            ((eq asterism 'mazestart)
+             (when (= (length path) 1)
+               (sm-print "We have entered the star maze!")))
+            (t nil)))))
 
 (defun eval-keys (env kbd)
   "Evaluate key input."
   (cond ((sm-walker env kbd)
-	 (sm-print (show-here env :level 1))
-	 (eval-here env))
-	(t (sm-print "No star that way."))))
+         (sm-print (show-here env :level 1))
+         (eval-here env))
+        (t (sm-print "No star that way."))))
 
 (defun play-read (&key (stream *query-io*))
   "Read input from player."
@@ -662,38 +662,38 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
 (defun play-apply (env order &rest args)
   "Carry out orders, update order history."
   (cond ((eq order 'bad-input)
-	 (let ((mesg (format nil "Bad input, '~A'. Type 'help' for help."
-			     (first args))))
-	   (with-accessors ((bad-max sm-bad-input-max)
-			    (bad-num sm-bad-input-count)) env
-	     (etypecase bad-max
-	       ((integer 1)
-		(cond ((< bad-max bad-num)
-		       (play-apply env 'end-game
-				   'too-many-bad-inputs))
-		      (t  (incf bad-num) mesg)))
-	       (null mesg)))))
-	(t
-	 (with-accessors ((orders  sm-orders)
-			  (ord-max sm-orders-max)) env
-	   (push (list* order args) orders)
-	   (etypecase ord-max
-	     ((integer 0) (when (< ord-max (length orders))
-			    ;; (delete (first (last orders)) orders :from-end t :count 1)))
-			    (setf orders
-			    	  (butlast orders
-			    		   (- (length orders) ord-max)))))
-	     (null nil)))
-	 (cond ((eq order 'show-maps)
-		(apply (symbol-function order) args))
-	       (t
-		(apply (symbol-function order) env args))))))
+         (let ((mesg (format nil "Bad input, '~A'. Type 'help' for help."
+                             (first args))))
+           (with-accessors ((bad-max sm-bad-input-max)
+                            (bad-num sm-bad-input-count)) env
+             (etypecase bad-max
+               ((integer 1)
+                (cond ((< bad-max bad-num)
+                       (play-apply env 'end-game
+                                   'too-many-bad-inputs))
+                      (t  (incf bad-num) mesg)))
+               (null mesg)))))
+        (t
+         (with-accessors ((orders  sm-orders)
+                          (ord-max sm-orders-max)) env
+           (push (list* order args) orders)
+           (etypecase ord-max
+             ((integer 0) (when (< ord-max (length orders))
+                            ;; (delete (first (last orders)) orders :from-end t :count 1)))
+                            (setf orders
+                                  (butlast orders
+                                           (- (length orders) ord-max)))))
+             (null nil)))
+         (cond ((eq order 'show-maps)
+                (apply (symbol-function order) args))
+               (t
+                (apply (symbol-function order) env args))))))
 
 (defun play-eval (env kbd)
   "Evaluate player input."
   (cond
     ((member kbd (sm-keys env)
-	     :test 'equal)    (play-apply env 'eval-keys kbd))
+             :test 'equal)    (play-apply env 'eval-keys kbd))
     ((equal  kbd "help")      (play-apply env 'show-help))
     ((equal  kbd "maps")      (play-apply env 'show-maps))
     ((equal  kbd "info")      (play-apply env 'show-info))
