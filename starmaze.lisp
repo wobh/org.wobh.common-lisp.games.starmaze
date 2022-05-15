@@ -659,7 +659,7 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
   (clear-input stream)
   (read-line stream))
 
-(defun play-apply (env order &rest args)
+(defun play-apply (order env &rest args)
   "Carry out orders, update order history."
   (cond ((eq order 'bad-input)
          (let ((mesg (format nil "Bad input, '~A'. Type 'help' for help."
@@ -669,7 +669,7 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
              (etypecase bad-max
                ((integer 1)
                 (cond ((< bad-max bad-num)
-                       (play-apply env 'end-game
+                       (play-apply 'end-game env
                                    'too-many-bad-inputs))
                       (t  (incf bad-num) mesg)))
                (null mesg)))))
