@@ -220,11 +220,9 @@ conversion."
 
 
 (defparameter *keys-db*
-  (list 
-   :number-row  (list "1" "2" "3" "4" "5" "6" "7" "8" "9")
-   :number-pad  (list "7" "8" "9" "4" "5" "6" "1" "2" "3")
-   :qwerty-left (list "q" "w" "e" "a" "s" "d" "z" "x" "c")
-  )
+  '(:number-row  (#\1 #\2 #\3 #\4 #\5 #\6 #\7 #\8 #\9)
+    :number-pad  (#\7 #\8 #\9 #\4 #\5 #\6 #\1 #\2 #\3)
+    :qwerty-left (#\q #\w #\e #\a #\s #\d #\z #\x #\c))
   "List of keys.")
 
 (defun list-keys ()
@@ -657,7 +655,16 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
   "Read input from player."
   (force-output stream)
   (clear-input stream)
-  (read-line stream))
+  (let* ((input-line (read-line stream))
+	 (input-word (subseq input-line
+			     0
+			     (position #\space
+				       input-line))))
+    (if (= 1 (length input-word))
+	(char input-word 0)
+	(values (intern (symbol-name (read-from-string input-word))
+			:keyword)))))
+
 
 (defun play-apply (order env &rest args)
   "Carry out orders, update order history."
@@ -691,17 +698,17 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
 
 (defun play-eval (env kbd)
   "Evaluate player input."
-  (cond
-    ((member kbd (sm-keys env)
-             :test 'equal)    (play-apply env 'eval-keys kbd))
-    ((equal  kbd "help")      (play-apply env 'show-help))
-    ((equal  kbd "maps")      (play-apply env 'show-maps))
-    ((equal  kbd "info")      (play-apply env 'show-info))
-    ((equal  kbd "keys")      (play-apply env 'show-keys))
-    ((equal  kbd "here")      (play-apply env 'show-here))
-    ((equal  kbd "near")      (play-apply env 'show-near))
-    ((equal  kbd "quit")      (play-apply env 'end-game 'quit-game))
-    (t                        (play-apply env 'bad-input kbd))))
+  (if (find kbd (sm-keys env))
+      (play-apply 'eval-keys env kbd)
+      (case kbd
+	(:help     (play-apply 'show-help env))
+	(:maps     (play-apply 'show-maps env))
+	(:info     (play-apply 'show-info env))
+	(:keys     (play-apply 'show-keys env))
+	(:here     (play-apply 'show-here env))
+	(:near     (play-apply 'show-near env))
+	(:quit     (play-apply 'end-game  env 'quit-game))
+	(otherwise (play-apply 'bad-input env kbd)))))
 
 (defun play-print (message &key (stream *standard-output*))
   "Print message to player."
