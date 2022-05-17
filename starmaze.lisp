@@ -656,14 +656,14 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
   (force-output stream)
   (clear-input stream)
   (let* ((input-line (read-line stream))
-	 (input-word (subseq input-line
-			     0
-			     (position #\space
-				       input-line))))
+         (input-word (subseq input-line
+                             0
+                             (position #\space
+                                       input-line))))
     (if (= 1 (length input-word))
-	(char input-word 0)
-	(values (intern (symbol-name (read-from-string input-word))
-			:keyword)))))
+        (char input-word 0)
+        (values (intern (symbol-name (read-from-string input-word))
+                        :keyword)))))
 
 
 (defun play-apply (order env &rest args)
@@ -701,14 +701,14 @@ Returns a list of binary digits in big-endian order. If figures are given, maps 
   (if (find kbd (sm-keys env))
       (play-apply 'eval-keys env kbd)
       (case kbd
-	(:help     (play-apply 'show-help env))
-	(:maps     (play-apply 'show-maps env))
-	(:info     (play-apply 'show-info env))
-	(:keys     (play-apply 'show-keys env))
-	(:here     (play-apply 'show-here env))
-	(:near     (play-apply 'show-near env))
-	(:quit     (play-apply 'end-game  env 'quit-game))
-	(otherwise (play-apply 'bad-input env kbd)))))
+        (:help     (play-apply 'show-help env))
+        (:maps     (play-apply 'show-maps env))
+        (:info     (play-apply 'show-info env))
+        (:keys     (play-apply 'show-keys env))
+        (:here     (play-apply 'show-here env))
+        (:near     (play-apply 'show-near env))
+        (:quit     (play-apply 'end-game  env 'quit-game))
+        (otherwise (play-apply 'bad-input env kbd)))))
 
 (defun play-print (message &key (stream *standard-output*))
   "Print message to player."
