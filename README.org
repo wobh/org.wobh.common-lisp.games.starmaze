@@ -30,7 +30,7 @@ To use:
 1. Clone repository
 2. Run ~make install~ this will install it into
    ~${XDG_DATA_HOME}/common-lisp/source/org.wobh.common-lisp.games.starmaze~
-3. in REPL ~(require :asdf)~ (as needed)
+3. in REPL ~(require "asdf")~ (as needed)
 4. ~(require :org.wobh.common-lisp.games.starmaze)~
 
 The test package is simply Lisp assertions and loads with the rest of
