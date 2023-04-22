@@ -28,19 +28,21 @@ Non-casual personal use is strongly discouraged.
 To use:
 
 1. Clone repository
-2. Run ~make install~ this will install it into
+2. Run =make install= this will install it into
    ~${XDG_DATA_HOME}/common-lisp/source/org.wobh.common-lisp.games.starmaze~
-3. in REPL ~(require "asdf")~ (as needed)
-4. ~(require :org.wobh.common-lisp.games.starmaze)~
-
-The test package is simply Lisp assertions and loads with the rest of
-the system. If the system loads without errors all the tests passed.
+3. in REPL =(require "asdf")= (as needed)
+4. =(asdf:load-system "org.wobh.common-lisp.games.starmaze")=
+5. =(starmaze:play)=
 
 The package defines a nickname of ~starmaze~ for convenience.
 
-Once required, you can play starmaze in the REPL with
-~(starmaze:play)~ or enter the playtest environment with ~(in-package
-#:starmaze-user)~.
+You can enter the playtest environment with =(in-package #:starmaze-user)=.
+
+To run tests: =(asdf:test-system "org.wobh.common-lisp.games.wizards-castle")=
+
+The test package is simply a package of Lisp assertions. Running the
+tests tries to load the test package and if it loads without errors
+all the tests passed.
 
 * COMMENT org settings
 #+options: ':nil *:t -:t ::t <:t H:6 \n:nil ^:t arch:headline
