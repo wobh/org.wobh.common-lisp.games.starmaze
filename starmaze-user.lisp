@@ -1,9 +1,8 @@
 ;; -*- mode: lisp -*-
 
 (defpackage #:org.wobh.common-lisp.games.starmaze-user
-  (:use #:common-lisp)
   (:nicknames #:starmaze-user)
-  (:local-nicknames (#:starmaze #:org.wobh.common-lisp.games.starmaze))
+  (:use #:common-lisp)
   (:import-from #:starmaze
 		#:play #:make-starmaze
 		#:list-games #:clear-games

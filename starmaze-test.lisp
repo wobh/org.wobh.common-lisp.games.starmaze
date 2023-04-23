@@ -2,7 +2,6 @@
 
 (defpackage #:org.wobh.common-lisp.games.starmaze-test
   (:nicknames #:starmaze-test)
-  (:local-nicknames (#:starmaze #:org.wobh.common-lisp.games.starmaze))
   (:use #:common-lisp)
   (:export #:test-all)
   (:documentation "ORG.WOBH.COMMON-LISP.GAMES.STARMAZE-TEST
